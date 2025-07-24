@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from 'antd';
 // import DeleteBtn from "./components/DeleteBtn";
 import { Flex, Splitter, Typography } from 'antd';
 import Tab from "./components/Tab"
@@ -62,7 +61,6 @@ export default function Home() {
                 <Link href="/create" className="text-white p-2 bg-green-600 rounded-lg">
                     Create
                 </Link>
-                <Button type="primary">Button</Button>
             </div>
             <div className="grid grid-cols-4 gap-4">
                 {postData && postData.length > 0 ? (
@@ -73,9 +71,9 @@ export default function Home() {
                             <p>{item.description}</p>
                             <p>{item.price}</p>
                             <div className="flex gap-2 justify-end">
-                                {/* <Link href={`/edit/${item._id}`} className="text-white p-2 bg-blue-500 rounded-lg">
+                                <Link href={`/edit/${item._id}`} className="text-white p-2 bg-blue-500 rounded-lg">
                                     Edit
-                                </Link> */}
+                                </Link>
                                 {/* <DeleteBtn id={item._id} /> */}
                             </div>
                         </div>
