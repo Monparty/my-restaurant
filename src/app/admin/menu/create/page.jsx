@@ -2,10 +2,14 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import AdminLayout from "@/app/components/AdminLayout";
-import { Button, Form, Input, Select } from "antd";
+import { Button, Form, Input, InputNumber, Select, message } from "antd";
 
 function page() {
     const router = useRouter();
+
+    const [messageApi, contextHolder] = message.useMessage();
+    const success = (message) => { messageApi.success(message) };
+
     const onFinish = async (values) => {
         console.log("Success:", values);
         try {
@@ -18,7 +22,10 @@ function page() {
             });
 
             if (res.ok) {
-                router.push("/admin/menu");
+                success('Data added successfully');
+                setTimeout(async () => {
+                    router.push("/admin/menu");
+                }, 1000);
             } else {
                 throw new Error("Failed to create post");
             }
@@ -33,11 +40,8 @@ function page() {
 
     const formData = (
         <Form
-            name="basic"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            style={{ maxWidth: 600 }}
-            initialValues={{ remember: true }}
+            name="create_menu"
+            style={{ maxWidth: 400 }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
@@ -47,9 +51,7 @@ function page() {
             <Form.Item
                 label="Menu name"
                 name="name"
-                rules={[
-                    { required: true, message: "Please input your username!" },
-                ]}
+                rules={[{ required: true, message: "Please input menu name!" }]}
             >
                 <Input />
             </Form.Item>
@@ -57,16 +59,16 @@ function page() {
                 label="Price"
                 name="price"
                 rules={[
-                    { required: true, message: "Please input your username!" },
+                    { required: true, message: "Please input menu price!" },
                 ]}
             >
-                <Input />
+                <InputNumber min={1} className="w-full!" />
             </Form.Item>
             <Form.Item
                 label="Category"
                 name="category"
                 rules={[
-                    { required: true, message: "Please input your username!" },
+                    { required: true, message: "Please input menu category!" },
                 ]}
             >
                 <Select
@@ -94,7 +96,12 @@ function page() {
         </Form>
     );
 
-    return <AdminLayout title={"Create menu"} mainComponent={formData} />;
+    return (
+        <>
+            {contextHolder}
+            <AdminLayout title={"Create menu"} mainComponent={formData} />
+        </>
+    );
 }
 
 export default page;

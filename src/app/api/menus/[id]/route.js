@@ -9,14 +9,10 @@ export async function GET(req, { params }) {
     return NextResponse.json({ menu }, { status: 200 });
 }
 
-export async function PUT(req, { params }) {
+export async function PUT(req, { params, values }) {
     const { id } = params;
     await connectMongoDB();
-    const {
-        newTitle: title,
-        newImg: img,
-        newContent: content
-    } = await req.json();
-    await MenuItem.findByIdAndUpdate(id, {title, img, content})
-    return NextResponse.json({ message: "Post update"} , { status: 200 })
+    const {name, price, category, description, imageUrl} = await req.json();
+    await MenuItem.findByIdAndUpdate(id, {name, price, category, description, imageUrl})
+    return NextResponse.json({ message: "Menu update"} , { status: 200 })
 }

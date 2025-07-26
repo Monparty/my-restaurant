@@ -2,14 +2,17 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import AdminLayout from "@/app/components/AdminLayout";
-import { Table, Button } from "antd";
 import Image from "next/image";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import Link from "next/link";
+import { Table, Button, message } from "antd";
 
 function page() {
     const [menuData, setMenuData] = useState([]);
-    console.table(menuData);
+    const [messageApi, contextHolder] = message.useMessage();
+    const success = (message) => {
+        messageApi.success(message);
+    };
 
     const getMenus = async () => {
         try {
@@ -26,6 +29,33 @@ function page() {
             setMenuData(data.menus);
         } catch (error) {
             console.log("Error loadind post: ", error);
+        }
+    };
+
+    const handleDelete = async (id, name) => {
+        const confirmed = confirm(`Are you sure you want to delete ${name}?`);
+
+        if (confirmed) {
+            try {
+                const res = await fetch(
+                    `http://localhost:3000/api/menus?id=${id}`,
+                    {
+                        method: "DELETE",
+                    }
+                );
+
+                if (!res.ok) {
+                    throw new Error("Failed to delete menu item!");
+                }
+
+                await getMenus();
+                success("Delete data successfully");
+                setTimeout(async () => {
+                    router.push("/admin/menu");
+                }, 1000);
+            } catch (error) {
+                console.error("Error deleting menu item:", error);
+            }
         }
     };
 
@@ -79,34 +109,38 @@ function page() {
     const data =
         menuData && menuData.length > 0
             ? menuData.map((item) => ({
-                  key: (count++),
+                  key: count++,
                   image: (
-                    <div className="flex justify-center">
-                        <Image
-                            src={item.imageUrl}
-                            width={50}
-                            height={50}
-                            className="object-cover w-full h-14 rounded-md"
-                            alt={item.name}
-                            unoptimized
-                        />
-                    </div>
+                      <div className="flex justify-center">
+                          <Image
+                              src={item.imageUrl}
+                              width={50}
+                              height={50}
+                              className="object-cover w-full h-14 rounded-md"
+                              alt={item.name}
+                              unoptimized
+                          />
+                      </div>
                   ),
                   name: item.name,
                   category: item.category,
-                  create: format(item.createdAt, 'dd/MM/yyyy - HH:mm:ss'),
-                  update: format(item.updatedAt, 'dd/MM/yyyy - HH:mm:ss'),
+                  create: format(item.createdAt, "dd/MM/yyyy - HH:mm:ss"),
+                  update: format(item.updatedAt, "dd/MM/yyyy - HH:mm:ss"),
                   test: (
-                    <div className="flex gap-2 justify-center">
-                        <Button color="primary" variant="filled">
-                            <Link href={`/admin/menu/edit/${item._id}`}>
-                                Edit
-                            </Link>
-                        </Button>
-                        <Button color="danger" variant="filled">
-                            Delete
-                        </Button>
-                    </div>
+                      <div className="flex gap-2 justify-center">
+                          <Link href={`/admin/menu/edit/${item._id}`}>
+                              <Button color="primary" variant="filled">
+                                  Edit
+                              </Button>
+                          </Link>
+                          <Button
+                              color="danger"
+                              variant="filled"
+                              onClick={() => handleDelete(item._id, item.name)}
+                          >
+                              Delete
+                          </Button>
+                      </div>
                   ),
               }))
             : [];
@@ -115,13 +149,23 @@ function page() {
         getMenus();
     }, []);
 
-    const table = <Table columns={columns} dataSource={data} />;
-    return (
-        <AdminLayout
-            showBtn={true}
-            title={"Menu Management"}
-            mainComponent={table}
+    const table = (
+        <Table
+            columns={columns}
+            dataSource={data}
+            pagination={{ pageSize: 10 }}
+            scroll={{ y: '90%' }}
         />
+    );
+    return (
+        <>
+            {contextHolder}
+            <AdminLayout
+                showBtn={true}
+                title={"Menu Management"}
+                mainComponent={table}
+            />
+        </>
     );
 }
 

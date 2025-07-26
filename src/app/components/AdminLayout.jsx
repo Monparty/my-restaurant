@@ -7,6 +7,7 @@ import {
     ContainerOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Button } from "antd";
+
 const { Header, Content, Footer, Sider } = Layout;
 const items = [
     {
@@ -64,26 +65,18 @@ function AdminLayout({ showBtn, title, mainComponent }) {
             </Sider>
             <Layout>
                 <Header className="flex justify-between items-center bg-white! px-6!">
-                    <h3 className="text-xl font-bold">{ title }</h3>
-                    {showBtn ? (
-                        <Button color="default" variant="filled">
-                            <Link href="/admin/menu/create">Add Item</Link>
-                        </Button>
-                    ) : (
-                        <></>
+                    <h3 className="text-xl font-bold">{title}</h3>
+                    {showBtn && (
+                        <Link href="/admin/menu/create">
+                            <Button color="default" variant="filled">
+                                Add Item
+                            </Button>
+                        </Link>
                     )}
-                    
                 </Header>
                 <Content className="mx-6 mt-6">
-                    <div
-                        style={{
-                            padding: 24,
-                            minHeight: 360,
-                            background: "white",
-                            borderRadius: "10px",
-                        }}
-                    >
-                        { mainComponent }
+                    <div className="p-4 bg-white rounded-lg overflow-y-scroll h-full">
+                        {mainComponent}
                     </div>
                 </Content>
                 <Footer style={{ textAlign: "center" }}>
