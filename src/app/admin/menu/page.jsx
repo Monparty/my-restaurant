@@ -154,7 +154,6 @@ function page() {
             columns={columns}
             dataSource={data}
             pagination={{ pageSize: 10 }}
-            scroll={{ y: '90%' }}
         />
     );
     return (

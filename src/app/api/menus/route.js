@@ -11,7 +11,7 @@ export async function POST(req) {
 
 export async function GET() {
     await connectMongoDB();
-    const menus = await MenuItem.find({});
+    const menus = await MenuItem.find({}).sort({ createdAt: -1 });
     return NextResponse.json({ menus })
 }
 
