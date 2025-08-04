@@ -1,5 +1,4 @@
 "use client";
-import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import AdminLayout from "@/app/components/AdminLayout";
 import { UploadOutlined } from "@ant-design/icons";
@@ -26,14 +25,14 @@ function page() {
             const reader = new FileReader();
 
             reader.onload = (event) => {
-                const img = new Image();
-                img.src = event.target.result;
+                const objImage = new Image();
+                objImage.src = event.target.result;
 
-                img.onload = () => {
+                objImage.onload = () => {
                     const canvas = document.createElement("canvas");
                     const ctx = canvas.getContext("2d");
-                    let width = img.width;
-                    let height = img.height;
+                    let width = objImage.width;
+                    let height = objImage.height;
 
                     if (width > maxWidth) {
                         height = height * (maxWidth / width);
@@ -42,12 +41,12 @@ function page() {
 
                     canvas.width = width;
                     canvas.height = height;
-                    ctx.drawImage(img, 0, 0, width, height);
+                    ctx.drawImage(objImage, 0, 0, width, height);
                     const dataUrl = canvas.toDataURL("image/webp", quality);
                     resolve(dataUrl);
                 };
 
-                img.onerror = (error) => reject(error);
+                objImage.onerror = (error) => reject(error);
             };
 
             reader.onerror = (error) => reject(error);
@@ -112,7 +111,7 @@ function page() {
             layout={"vertical"}
             size={"large"}
             initialValues={{
-                status: 1
+                status: 1,
             }}
         >
             <Form.Item
@@ -170,8 +169,8 @@ function page() {
                     name="statusGroup"
                     defaultValue={1}
                     options={[
-                        { value: 1, label: 'published' },
-                        { value: 0, label: 'unpublished' },
+                        { value: 1, label: "published" },
+                        { value: 0, label: "unpublished" },
                     ]}
                 />
             </Form.Item>

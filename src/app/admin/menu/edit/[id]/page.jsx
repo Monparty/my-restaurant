@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { Image } from "antd";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import AdminLayout from "@/app/components/AdminLayout";
@@ -14,6 +13,7 @@ import {
     Select,
     message,
     Upload,
+    Image as AntdImage
 } from "antd";
 
 function page({ params }) {
@@ -53,15 +53,74 @@ function page({ params }) {
         }
     };
 
+    const getBase64WithCompression = (file, maxWidth = 800, quality = 0.7) =>
+        new Promise((resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                const objImage = new Image();
+                
+                objImage.src = event.target.result;
+                objImage.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+                    let width = objImage.width;
+                    let height = objImage.height;
+
+                    if (width > maxWidth) {
+                        height = height * (maxWidth / width);
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(objImage, 0, 0, width, height);
+                    const dataUrl = canvas.toDataURL("image/webp", quality);
+                    resolve(dataUrl);
+                };
+
+                objImage.onerror = (error) => reject(error);
+            };
+
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
+        });
+
     const onFinish = async (values) => {
         // console.log("Success:", values);
+        const newValues = { ...values };
+
+        if (
+            values.imageUrl &&
+            Array.isArray(values.imageUrl) &&
+            values.imageUrl.length > 0
+        ) {
+            try {
+                const file = values.imageUrl[0].originFileObj;
+                const base64String = await getBase64WithCompression(
+                    file,
+                    800,
+                    0.7
+                );
+                // console.log("Converted Image to Base64:", base64String);
+                newValues.imageUrl = base64String;
+            } catch (error) {
+                console.error("Failed to convert file:", error);
+                return;
+            }
+        } else if (values.imageUrl && typeof values.imageUrl === "string") {
+            
+        } else {
+            newValues.imageUrl = null;
+        }
+
         try {
             const res = await fetch(`http://localhost:3000/api/menus/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(values),
+                body: JSON.stringify(newValues),
             });
 
             if (!res.ok) {
@@ -141,9 +200,10 @@ function page({ params }) {
                 <Upload beforeUpload={() => false} maxCount={1}>
                     <Button icon={<UploadOutlined />}>Click to Upload</Button>
                 </Upload>
+            </Form.Item>
                 {menuData.imageUrl ? (
-                    <div className="mt-4">
-                        <Image
+                    <div className="mb-4 w-fit">
+                        <AntdImage
                             width={160}
                             height={160}
                             className="object-cover"
@@ -153,7 +213,6 @@ function page({ params }) {
                 ) : (
                     <></>
                 )}
-            </Form.Item>
             <Form.Item label="Status" name="status">
                 <Radio.Group
                     name="statusGroup"

@@ -70,38 +70,38 @@ function page() {
             title: "Image",
             dataIndex: "image",
             key: "image",
+            align: "center",
             width: "8%",
         },
         {
             title: "Name",
             dataIndex: "name",
             key: "name",
+            align: "center",
         },
         {
             title: "Category",
             dataIndex: "category",
             key: "category",
+            align: "center",
         },
         {
             title: "Status",
             dataIndex: "status",
-            key: "status",
             align: "center",
-
+            key: "status",
         },
         {
             title: "Create date",
             dataIndex: "create",
             key: "create",
             align: "center",
-
         },
         {
             title: "Update date",
             dataIndex: "update",
             key: "update",
             align: "center",
-
         },
         {
             title: "",
@@ -115,22 +115,34 @@ function page() {
         menuData && menuData.length > 0
             ? menuData.map((item) => ({
                   key: count++,
-                  image: (item.imageUrl !== null ?
-                      <div className="flex justify-center">
-                          <Image
-                              src={item.imageUrl}
-                              width={50}
-                              height={50}
-                              className="object-cover w-full h-14 rounded-md"
-                              alt={item.name}
-                          />
-                      </div> :
-                      <div className="flex justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 32 32"><path fill="#a6a6a6" d="M30 3.414L28.586 2L2 28.586L3.414 30l2-2H26a2.003 2.003 0 0 0 2-2V5.414zM26 26H7.414l7.793-7.793l2.379 2.379a2 2 0 0 0 2.828 0L22 19l4 3.997zm0-5.832l-2.586-2.586a2 2 0 0 0-2.828 0L19 19.168l-2.377-2.377L26 7.414zM6 22v-3l5-4.997l1.373 1.374l1.416-1.416l-1.375-1.375a2 2 0 0 0-2.828 0L6 16.172V6h16V4H6a2 2 0 0 0-2 2v16z"/></svg>
-                      </div>
-                  ),
-                  name: item.name,
-                  category: item.category,
+                  image:
+                      item.imageUrl !== null ? (
+                          <div className="flex justify-center">
+                              <Image
+                                  src={item.imageUrl}
+                                  width={50}
+                                  height={50}
+                                  className="object-cover w-full h-14 rounded-md"
+                                  alt={item.name}
+                              />
+                          </div>
+                      ) : (
+                          <div className="flex justify-center">
+                              <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="30"
+                                  height="30"
+                                  viewBox="0 0 32 32"
+                              >
+                                  <path
+                                      fill="#a6a6a6"
+                                      d="M30 3.414L28.586 2L2 28.586L3.414 30l2-2H26a2.003 2.003 0 0 0 2-2V5.414zM26 26H7.414l7.793-7.793l2.379 2.379a2 2 0 0 0 2.828 0L22 19l4 3.997zm0-5.832l-2.586-2.586a2 2 0 0 0-2.828 0L19 19.168l-2.377-2.377L26 7.414zM6 22v-3l5-4.997l1.373 1.374l1.416-1.416l-1.375-1.375a2 2 0 0 0-2.828 0L6 16.172V6h16V4H6a2 2 0 0 0-2 2v16z"
+                                  />
+                              </svg>
+                          </div>
+                      ),
+                  name: <div className="text-left">{item.name}</div>,
+                  category: <div className="capitalize">{item.category}</div>,
                   status:
                       item.status === 1 ? (
                           <Button color="cyan" variant="filled">
