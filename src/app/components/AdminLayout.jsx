@@ -80,7 +80,7 @@ function AdminLayout({ showBtn, title, mainComponent }) {
                     </div>
                 </Content>
                 <Footer style={{ textAlign: "center" }}>
-                    Ant Design ©{new Date().getFullYear()} Created by Ant UED
+                    Monsie POS ©{new Date().getFullYear()} Created by Mon
                 </Footer>
             </Layout>
         </Layout>

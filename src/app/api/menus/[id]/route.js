@@ -12,7 +12,7 @@ export async function GET(req, { params }) {
 export async function PUT(req, { params, values }) {
     const { id } = params;
     await connectMongoDB();
-    const {name, price, category, description, imageUrl} = await req.json();
-    await MenuItem.findByIdAndUpdate(id, {name, price, category, description, imageUrl})
+    const menuData = await req.json();
+    await MenuItem.findByIdAndUpdate(id, menuData)
     return NextResponse.json({ message: "Menu update"} , { status: 200 })
 }

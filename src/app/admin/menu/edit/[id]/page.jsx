@@ -1,14 +1,25 @@
 "use client";
 import React from "react";
+import { Image } from "antd";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import AdminLayout from "@/app/components/AdminLayout";
-import { Button, Form, Input, InputNumber, Select, message } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import {
+    Button,
+    Form,
+    Input,
+    InputNumber,
+    Radio,
+    Select,
+    message,
+    Upload,
+} from "antd";
 
 function page({ params }) {
     const router = useRouter();
     const { id } = params;
-    const [menuData, setMenuDatat] = useState([]);
+    const [menuData, setMenuData] = useState([]);
     const [form] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
     const success = (message) => {
@@ -27,12 +38,13 @@ function page({ params }) {
             }
 
             const data = await res.json();
-            setMenuDatat(data.menu);
+            setMenuData(data.menu);
 
             form.setFieldsValue({
                 name: data.menu.name,
                 price: data.menu.price,
                 category: data.menu.category,
+                status: data.menu.status,
                 description: data.menu.description,
                 imageUrl: data.menu.imageUrl,
             });
@@ -42,7 +54,7 @@ function page({ params }) {
     };
 
     const onFinish = async (values) => {
-        console.log("Success:", values);
+        // console.log("Success:", values);
         try {
             const res = await fetch(`http://localhost:3000/api/menus/${id}`, {
                 method: "PUT",
@@ -72,7 +84,7 @@ function page({ params }) {
     const formData = (
         <Form
             form={form}
-            name="edit_menu"
+            name="create_menu"
             style={{ maxWidth: 400 }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
@@ -104,6 +116,7 @@ function page({ params }) {
                 ]}
             >
                 <Select
+                    defaultValue="-"
                     className="w-full!"
                     options={[
                         { value: "food", label: "Food" },
@@ -113,12 +126,44 @@ function page({ params }) {
                 />
             </Form.Item>
             <Form.Item label="Description" name="description">
-                <Input placeholder={menuData.description} />
+                <Input />
             </Form.Item>
-            <Form.Item label="Image Url" name="imageUrl">
-                <Input placeholder={menuData.imageUrl} />
+            <Form.Item
+                name="imageUrl"
+                label="Menu Image"
+                getValueFromEvent={(e) => {
+                    if (Array.isArray(e)) {
+                        return e;
+                    }
+                    return e?.fileList;
+                }}
+            >
+                <Upload beforeUpload={() => false} maxCount={1}>
+                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                </Upload>
+                {menuData.imageUrl ? (
+                    <div className="mt-4">
+                        <Image
+                            width={160}
+                            height={160}
+                            className="object-cover"
+                            src={menuData.imageUrl}
+                        />
+                    </div>
+                ) : (
+                    <></>
+                )}
             </Form.Item>
-
+            <Form.Item label="Status" name="status">
+                <Radio.Group
+                    name="statusGroup"
+                    defaultValue={1}
+                    options={[
+                        { value: 1, label: "published" },
+                        { value: 0, label: "unpublished" },
+                    ]}
+                />
+            </Form.Item>
             <Form.Item label={""}>
                 <Button type="primary" htmlType="submit">
                     Edit
@@ -133,7 +178,7 @@ function page({ params }) {
     return (
         <>
             {contextHolder}
-            <AdminLayout title={"Create menu"} mainComponent={formData} />
+            <AdminLayout title={"Edit menu"} mainComponent={formData} />
         </>
     );
 }

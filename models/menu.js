@@ -7,6 +7,7 @@ const menuItemSchema = new Schema(
         category: String,
         imageUrl: String,
         price: Number,
+        status: Number
     },
     {
         timestamps: true

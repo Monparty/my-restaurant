@@ -8,6 +8,7 @@ import {
     Form,
     Input,
     InputNumber,
+    Radio,
     Select,
     message,
     Upload,
@@ -20,12 +21,37 @@ function page() {
         messageApi.success(message);
     };
 
-    const getBase64 = (file) =>
+    const getBase64WithCompression = (file, maxWidth = 800, quality = 0.7) =>
         new Promise((resolve, reject) => {
             const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
+
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth) {
+                        height = height * (maxWidth / width);
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const dataUrl = canvas.toDataURL("image/webp", quality);
+                    resolve(dataUrl);
+                };
+
+                img.onerror = (error) => reject(error);
+            };
+
             reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
         });
 
     const onFinish = async (values) => {
@@ -35,13 +61,15 @@ function page() {
         if (values.imageUrl && values.imageUrl.length > 0) {
             try {
                 const file = values.imageUrl[0].originFileObj;
-                const base64String = await getBase64(file);
-                console.log("Converted Image to Base64:", base64String);
+                const base64String = await getBase64WithCompression(
+                    file,
+                    800,
+                    0.7
+                );
+                // console.log("Converted Image to Base64:", base64String);
                 newValues.imageUrl = base64String;
-                message.success("ข้อมูลพร้อมไฟล์ถูกประมวลผลสำเร็จ!");
             } catch (error) {
                 console.error("Failed to convert file:", error);
-                message.error("ไม่สามารถแปลงไฟล์เป็น Base64 ได้");
                 return;
             }
         } else {
@@ -83,6 +111,9 @@ function page() {
             autoComplete="off"
             layout={"vertical"}
             size={"large"}
+            initialValues={{
+                status: 1
+            }}
         >
             <Form.Item
                 label="Menu name"
@@ -134,7 +165,16 @@ function page() {
                     <Button icon={<UploadOutlined />}>Click to Upload</Button>
                 </Upload>
             </Form.Item>
-
+            <Form.Item label="Status" name="status">
+                <Radio.Group
+                    name="statusGroup"
+                    defaultValue={1}
+                    options={[
+                        { value: 1, label: 'published' },
+                        { value: 0, label: 'unpublished' },
+                    ]}
+                />
+            </Form.Item>
             <Form.Item label={""}>
                 <Button type="primary" htmlType="submit">
                     Create
