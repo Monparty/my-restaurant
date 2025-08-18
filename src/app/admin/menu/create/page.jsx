@@ -76,7 +76,7 @@ function page() {
         }
 
         try {
-            const res = await fetch("http://localhost:3000/api/menus", {
+            const res = await fetch(`${ process.env.NEXT_PUBLIC_APP_URL_APP_URL }/api/menus`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

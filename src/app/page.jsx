@@ -13,7 +13,7 @@ export default function Home() {
 
     const getMenus = async () => {
         try {
-            const res = await fetch("http://localhost:3000/api/menus", {
+            const res = await fetch(`${ process.env.NEXT_PUBLIC_APP_URL_APP_URL }/api/menus`, {
                 method: "GET",
                 caches: "no-store"
             })
@@ -47,6 +47,7 @@ export default function Home() {
         <div className="container mx-auto">
             <h1 className="text-2xl font-bold py-4 border-b border-gray-200">
                 my restaurant
+                {process.env.APP_URL}
             </h1>
             <Splitter className="h-dvh! shadow-xl bg-[#FCFBF7]" >
                 <Splitter.Panel defaultSize="30%" min="20%" max="100%" className="p-4!">

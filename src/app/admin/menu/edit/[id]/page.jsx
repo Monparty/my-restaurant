@@ -28,7 +28,7 @@ function page({ params }) {
 
     const getDataById = async (id) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/menus/${id}`, {
+            const res = await fetch(`${ process.env.NEXT_PUBLIC_APP_URL_APP_URL }/api/menus/${id}`, {
                 method: "GET",
                 cache: "no-store",
             });
@@ -115,7 +115,7 @@ function page({ params }) {
         }
 
         try {
-            const res = await fetch(`http://localhost:3000/api/menus/${id}`, {
+            const res = await fetch(`${ process.env.NEXT_PUBLIC_APP_URL_APP_URL }/api/menus/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

@@ -16,7 +16,7 @@ function page() {
 
     const getMenus = async () => {
         try {
-            const res = await fetch("http://localhost:3000/api/menus", {
+            const res = await fetch(`${ process.env.NEXT_PUBLIC_APP_URL_APP_URL }/api/menus`, {
                 method: "GET",
                 caches: "no-store",
             });
@@ -38,7 +38,7 @@ function page() {
         if (confirmed) {
             try {
                 const res = await fetch(
-                    `http://localhost:3000/api/menus?id=${id}`,
+                    `${ process.env.NEXT_PUBLIC_APP_URL_APP_URL }/api/menus?id=${id}`,
                     {
                         method: "DELETE",
                     }
