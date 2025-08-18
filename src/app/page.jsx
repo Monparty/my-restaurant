@@ -9,9 +9,9 @@ import CardItem from "./components/CardItem"
 import OrderList from "./components/OrderList";
 
 export default function Home() {
-    const [postData, setPostData] = useState([])
+    const [menuData, setMenuData] = useState([])
 
-    const getPosts = async () => {
+    const getMenus = async () => {
         try {
             const res = await fetch("http://localhost:3000/api/menus", {
                 method: "GET",
@@ -19,18 +19,18 @@ export default function Home() {
             })
 
             if (!res.ok) {
-                throw new Error("Failed to fetch posts!");
+                throw new Error("Failed to fetch menus!");
             }
 
             const data = await res.json();
-            setPostData(data.menus);
+            setMenuData(data.menus);
         } catch (error) {
-            console.log("Error loadind post: ", error);
+            console.log("Error loadind menu: ", error);
         }
     }
 
     useEffect(() => {
-        getPosts();
+        getMenus();
     }, []);
     const Desc = props => (
         <Typography.Title type="secondary" level={5}>
@@ -38,7 +38,7 @@ export default function Home() {
         </Typography.Title>
     );
 
-    const card = <CardItem />
+    const card = <CardItem menuData={menuData} />
     const order = <OrderList />
     const tabs = <Tab component={card} />
 
@@ -63,8 +63,8 @@ export default function Home() {
                 </Link>
             </div>
             <div className="grid grid-cols-4 gap-4">
-                {postData && postData.length > 0 ? (
-                    postData.map(item => (
+                {menuData && menuData.length > 0 ? (
+                    menuData.map(item => (
                         <div key={item._id} className="border border-gray-200 p-4 rounded-lg grid gap-4 shadow-md">
                             <h4>{item.name}</h4>
                             <Image className="w-full rounded-lg" width={100} height={100} src={item.imageUrl} alt={item.name} unoptimized />
@@ -80,7 +80,7 @@ export default function Home() {
                     ))
                 ) : (
                     <p>
-                        No posts
+                        No Menu
                     </p>
                 )}
             </div>

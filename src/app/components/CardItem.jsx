@@ -1,5 +1,5 @@
 import Image from "next/image";
-export default function CardItem() {
+export default function CardItem({ menuDatas }) {
     return (
         <div>
             <div>
